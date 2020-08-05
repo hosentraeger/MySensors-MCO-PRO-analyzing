@@ -1,0 +1,11 @@
+./configure \
+--spi-driver=SPIDEV \
+--my-transport=rfm69 \
+--my-rfm69-frequency=868 \
+--my-is-rfm69hw \
+--my-gateway=ethernet \
+--my-port=5003 \
+--my-signing=software \
+--my-signing-request-signatures \
+--my-signing-debug \
+--extra-cxxflags="-DMY_RFM69_NETWORKID=\(100\) -DMY_RFM69_CSMA_LIMIT_DBM=\(-90\) -DMY_SIGNAL_REPORT_ENABLED"
