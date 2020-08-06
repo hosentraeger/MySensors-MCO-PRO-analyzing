@@ -8,5 +8,5 @@
 <tr><td>6</td><td>Arduino</td><td>y</td><td>1000</td><td>mini</td><td>GW+Node: MCO:PRO rc=1</td></tr>
 <tr><td>7</td><td>Raspberry</td><td>y</td><td>1000</td><td>mini</td><td>GW+Node: MCO:PRO rc=1</td></tr>
 <tr><td>8</td><td>Raspberry</td><td>y</td><td>1000</td><td>hello</td><td>GW+Node: MCO:PRO rc=1 (presentation+send msg to node)</td></tr>
-<tr><td>9</td><td>Raspberry</td><td>y</td><td>0</td><td>hello</td><td>GW: MCO:PRO rc=1, Node: according to the logs MCO:PRO, but in my memory fine, have to repeat the test</td><tr><td>10</td><td>Arduino</td><td>y</td><td>0</td><td>mini</td><td>GW+Node: MCO:PRO rc=1</td></tr>
+<tr><td>9</td><td>Raspberry</td><td>y</td><td>0</td><td>hello</td><td>GW: MCO:PRO rc=1, Node: according to the logs MCO:PRO, but in my memory fine, have to repeat the test</td><tr><td>10</td><td>Arduino</td><td>y</td><td>1000</td><td>mini</td><td>GW+Node: MCO:PRO rc=1</td></tr>
 </table>
