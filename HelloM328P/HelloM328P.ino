@@ -1,4 +1,6 @@
 // Hello MySensors
+#define USE_SIGNING
+#define USE_NRF24_AND_NOT_RFM69
 
 #define SN "Hello MySensors 328P"
 #define SV "1.3"
@@ -13,16 +15,19 @@
 /**
  * Radio
  */
-#define MY_RADIO_RFM69
-#define MY_RFM69_NEW_DRIVER
-// Network: 100=live, 99=test, 200=dev
-//#define MY_RFM69_NETWORKID (200)
-#define MY_IS_RFM69HW
-// #define MY_RFM69_TX_POWER_DBM (20)
-// #define MY_RFM69_CS_PIN (10)
-// #define MY_RFM69_IRQ_PIN (2)
-// #define MY_RFM69_IRQ_NUM (digitalPinToInterrupt(MY_RFM69_IRQ_PIN))
-
+#ifdef USE_NRF24_AND_NOT_RFM69
+  #define MY_RADIO_RF24
+#else
+  #define MY_RADIO_RFM69
+  #define MY_RFM69_NEW_DRIVER
+  // Network: 100=live, 99=test, 200=dev
+  //#define MY_RFM69_NETWORKID (200)
+  #define MY_IS_RFM69HW
+  // #define MY_RFM69_TX_POWER_DBM (20)
+  // #define MY_RFM69_CS_PIN (10)
+  // #define MY_RFM69_IRQ_PIN (2)
+  // #define MY_RFM69_IRQ_NUM (digitalPinToInterrupt(MY_RFM69_IRQ_PIN))
+#endif
 /**
  * Debug
  */
@@ -36,9 +41,12 @@
  * Signing
  */
 
-#define MY_SIGNING_ATSHA204
-#define MY_SIGNING_REQUEST_SIGNATURES
-#define MY_DEBUG_VERBOSE_SIGNING
+#ifdef USE_SIGNING
+  #define MY_SIGNING_ATSHA204_PIN 17
+  #define MY_SIGNING_ATSHA204
+  #define MY_SIGNING_REQUEST_SIGNATURES
+  #define MY_DEBUG_VERBOSE_SIGNING
+#endif
 
 #include <MySensors.h>
 
@@ -78,9 +86,11 @@ void before ( )
   // LED connected to two arduino pins, saving wires
   pinMode ( PIN_LED_A, OUTPUT );
   pinMode ( PIN_LED_C, OUTPUT );
+#ifdef USE_NRF24_AND_NOT_RFM69
+#else
   pinMode ( MY_RFM69_CS_PIN, OUTPUT );
   pinMode ( MY_RFM69_IRQ_PIN, INPUT_PULLUP );
-
+#endif
   digitalWrite ( PIN_LED_C, LOW );
   digitalWrite ( PIN_LED_A, HIGH ); // led on
 };
