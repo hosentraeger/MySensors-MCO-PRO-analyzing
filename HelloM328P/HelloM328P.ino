@@ -1,6 +1,7 @@
 // Hello MySensors
 #define USE_SIGNING
 #define USE_NRF24_AND_NOT_RFM69
+#define NO_PERIODIC_TASKS
 
 #define SN "Hello MySensors 328P"
 #define SV "1.3"
@@ -20,13 +21,13 @@
 #else
   #define MY_RADIO_RFM69
   #define MY_RFM69_NEW_DRIVER
-  // Network: 100=live, 99=test, 200=dev
-  //#define MY_RFM69_NETWORKID (200)
+  // Network: 100=live, 42=live(new driver), 99=test, 200=dev
+  #define MY_RFM69_NETWORKID (200)
   #define MY_IS_RFM69HW
-  // #define MY_RFM69_TX_POWER_DBM (20)
-  // #define MY_RFM69_CS_PIN (10)
-  // #define MY_RFM69_IRQ_PIN (2)
-  // #define MY_RFM69_IRQ_NUM (digitalPinToInterrupt(MY_RFM69_IRQ_PIN))
+  #define MY_RFM69_TX_POWER_DBM (20)
+  #define MY_RFM69_CS_PIN (10)
+  #define MY_RFM69_IRQ_PIN (2)
+  #define MY_RFM69_IRQ_NUM (digitalPinToInterrupt(MY_RFM69_IRQ_PIN))
 #endif
 /**
  * Debug
@@ -52,8 +53,8 @@
 
 
 // sketch specific settings
-const uint8_t PIN_LED_C = 8;
-const uint8_t PIN_LED_A = 9;
+const uint8_t PIN_LED_C = 14;
+const uint8_t PIN_LED_A = 15;
 
 enum CHILDS
 {
@@ -80,9 +81,38 @@ const char * sensorTitles[CHILD_COUNT] =
 // used to send hello messages
 MyMessage msg ( CHILD_HELLO, V_STATUS );
 char msgBuffer[25];
+
+void printConfig ( )
+{
+  MY_SERIALDEVICE.println ( F ( "***********************************************" ) );
+  MY_SERIALDEVICE.println ( SN );
+  MY_SERIALDEVICE.print ( "Version " );
+  MY_SERIALDEVICE.println ( SV );
+  MY_SERIALDEVICE.print ( F ( "Radio type: " ) );
+#ifdef USE_NRF24_AND_NOT_RFM69
+    MY_SERIALDEVICE.println ( F ( "NRF24" ) );
+#else
+    MY_SERIALDEVICE.println ( F (  "RFM69" ) );
+    MY_SERIALDEVICE.print ( F ( "network id: " ) );
+    MY_SERIALDEVICE.println ( MY_RFM69_NETWORKID );
+#ifdef MY_RFM69_NEW_DRIVER
+    MY_SERIALDEVICE.println ( F ( "driver: new" ) );
+#else
+    MY_SERIALDEVICE.println ( F ( "driver: old" ) );
+#endif
+#endif
+  MY_SERIALDEVICE.print ( F ( "signing: " ) );
+#ifdef USE_SIGNING
+    MY_SERIALDEVICE.println ( "yes" );
+#else
+    MY_SERIALDEVICE.println ( "no" );
+#endif
+}
   
 void before ( )
 {
+  MY_SERIALDEVICE.begin ( 115200 );
+  printConfig ( );
   // LED connected to two arduino pins, saving wires
   pinMode ( PIN_LED_A, OUTPUT );
   pinMode ( PIN_LED_C, OUTPUT );
@@ -117,7 +147,11 @@ void receive(const MyMessage & message)
     return;
   };
   
-  message.getString ( msgBuffer );
+//  message.getString ( msgBuffer );
+
+  strcpy(msgBuffer, message.getString());        // copy it in
+  MY_SERIALDEVICE.print ( msgBuffer[0] );
+  MY_SERIALDEVICE.println ( );
   MY_SERIALDEVICE.print ( "received message for sensor " );
   MY_SERIALDEVICE.print ( message.sensor );
   MY_SERIALDEVICE.print ( ", type " );
@@ -136,7 +170,6 @@ void receive(const MyMessage & message)
 
 void setup()
 {
-  Serial.begin ( 115200 );
   digitalWrite ( PIN_LED_A, LOW ); // led off
 }
 
@@ -145,10 +178,12 @@ const uint16_t HELLO_INTERVAL = 2000; // send hello message after 2 sec
 
 void loop()
 {
+#ifndef NO_PERIODIC_TASKS
   if ( millis ( ) > timestampNextHello )
   {
     sprintf ( msgBuffer, "Hello %lu", millis ( ) );
     send ( msg.set ( msgBuffer ) );
     timestampNextHello = millis ( ) + HELLO_INTERVAL;
   };
+#endif
 };
